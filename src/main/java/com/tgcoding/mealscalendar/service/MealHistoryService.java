@@ -3,9 +3,16 @@ package com.tgcoding.mealscalendar.service;
 import com.tgcoding.mealscalendar.exception.KnownErrorException;
 import com.tgcoding.mealscalendar.model.MealHistory;
 import com.tgcoding.mealscalendar.repository.MealHistoryRepository;
+import com.tgcoding.mealscalendar.util.DateUtil;
 import org.springframework.stereotype.Service;
 
-import java.util.Optional;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toList;
 
 @Service
 public class MealHistoryService {
@@ -36,6 +43,38 @@ public class MealHistoryService {
     public Iterable<MealHistory> getAll() {
         Iterable<MealHistory> items = mealHistoryRepository.findAll();
         return items;
+    }
+
+    public Map<LocalDate, List<MealHistory>> getCurrentWeek(LocalDate date) {
+        LocalDate start = DateUtil.getFirstWeekDate(date);
+        LocalDate end = DateUtil.getLastWeekDate(date);
+
+        Map<LocalDate, List<MealHistory>> datesMap = getAllDatesBetweenInclusiveAsMap(start, end);
+        List<MealHistory> mealHistoryList = mealHistoryRepository.findAllByMealDateBetweenOrderByMealTime(start, end);
+        Map<LocalDate, List<MealHistory>> mealHistoryMap = groupByDate(mealHistoryList);
+        datesMap.putAll(mealHistoryMap);
+
+        return datesMap;
+    }
+
+    public static Map<LocalDate, List<MealHistory>> getAllDatesBetweenInclusiveAsMap(LocalDate start, LocalDate end) {
+        List<LocalDate> list = DateUtil.getAllDatesBetweenInclusive(start, end);
+
+        Map<LocalDate, List<MealHistory>> map = list.stream().collect(Collectors.toMap(
+                Function.identity(),
+                item-> new ArrayList<>(),
+                (k, v) -> {
+                    throw new IllegalStateException("Duplicate key");
+                },
+                LinkedHashMap::new));
+
+        return map;
+    }
+
+    public static Map<LocalDate, List<MealHistory>> groupByDate(List<MealHistory> list) {
+        Map<LocalDate, List<MealHistory>> byDay = list.stream().collect(groupingBy(MealHistory::getMealDate, LinkedHashMap::new, toList()));
+
+        return byDay;
     }
 
     public MealHistory findById(Long id) {

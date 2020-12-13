@@ -34,6 +34,12 @@ public class MealHistoryController {
         return items;
     }
 
+    @GetMapping("/currentweek")
+    public Map<LocalDate, List<MealHistory>> getCurrentWeek() {
+        Map<LocalDate, List<MealHistory>> items = mealHistoryService.getCurrentWeek(LocalDate.now());
+        return items;
+    }
+
     @GetMapping("/{id}")
     public MealHistory getById(@PathVariable("id") long id) {
         MealHistory item = mealHistoryService.findById(id);
