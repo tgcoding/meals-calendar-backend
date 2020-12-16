@@ -25,8 +25,6 @@ pipeline {
                 script {
                     packaged_jar_dir = "${env.WORKSPACE}"
                 }
-                sh 'echo package: packaged_jar_dir'
-                echo "$packaged_jar_dir"
 
                 script {
                     pom = readMavenPom file: 'pom.xml'
@@ -35,30 +33,13 @@ pipeline {
             }
         }
         stage('buildImage') {
-            /*environment {
-                JAR_FILE = ''
-            }*/
             steps {
-                sh 'echo push: packaged_jar_dir'
-                echo "$packaged_jar_dir"
                 script {
                     jar_dir_final = packaged_jar_dir+'/target/'
                     jar_file_final = jar_dir_final+'meals-calendar-backend.jar'
                 }
 
-                sh 'echo push: jar_dir_final'
-                echo "$jar_dir_final"
-                sh "ls -la ${jar_dir_final}"
-
-                sh 'echo push: jar_file_final'
-                echo "$jar_file_final"
-                sh "ls -la $jar_file_final"
-
                 sh "cp ${jar_file_final} ."
-                sh "ls -la"
-
-                echo 'Version:Hash'
-                echo "${pom_version_num}:${env.GIT_COMMIT}"
 
                 sh "docker build -t repo.treescale.com/tgcoding/meals-calendar-backend:${pom_version_num}-${env.GIT_COMMIT} -t repo.treescale.com/tgcoding/meals-calendar-backend:latest ."
             }
@@ -68,8 +49,6 @@ pipeline {
                 sh "echo $TREESCALE_PASSWORD | docker login -u tgcoding --password-stdin repo.treescale.com"
                 sh "docker push repo.treescale.com/tgcoding/meals-calendar-backend:${pom_version_num}-${env.GIT_COMMIT}"
                 sh "docker push repo.treescale.com/tgcoding/meals-calendar-backend:latest"
-
-                sh 'docker ps'
             }
         }
     }
