@@ -78,6 +78,7 @@
 	</dependencies>
 
 	<build>
+		<finalName>meals-calendar-backend</finalName>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
