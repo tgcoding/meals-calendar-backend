@@ -2,6 +2,7 @@ package com.tgcoding.mealscalendar.service;
 
 import com.tgcoding.mealscalendar.model.MealHistory;
 import com.tgcoding.mealscalendar.model.User;
+import com.tgcoding.mealscalendar.security.AuthProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,6 +44,8 @@ public class MealHistoryServiceIntegrationTest {
     synchronized public void setup() {
         if (user.getId() == null) {
             user.setEmail(EMAIL);
+            user.setProvider(AuthProvider.google);
+            user.setProviderId("123");
             user = userService.save(user);
             userId = user.getId();
         }

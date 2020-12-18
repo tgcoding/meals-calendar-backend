@@ -2,8 +2,11 @@ package com.tgcoding.mealscalendar.controller;
 
 import com.tgcoding.mealscalendar.exception.KnownErrorException;
 import com.tgcoding.mealscalendar.model.MealHistory;
+import com.tgcoding.mealscalendar.security.CurrentUser;
+import com.tgcoding.mealscalendar.security.UserPrincipal;
 import com.tgcoding.mealscalendar.service.MealHistoryService;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -23,7 +26,9 @@ public class MealHistoryController {
             value = "/",
             consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    public MealHistory save(@RequestBody MealHistory mealHistory) throws KnownErrorException {
+    public MealHistory save(@CurrentUser UserPrincipal userPrincipal, @RequestBody MealHistory mealHistory)
+            throws KnownErrorException {
+        mealHistory.setUser(userPrincipal.getUser());
         MealHistory saved = mealHistoryService.save(mealHistory);
         return saved;
     }
