@@ -38,7 +38,8 @@ public class UserControllerTest {
 
     @Before
     public void setup() {
-        mockMvc = MockMvcBuilders.standaloneSetup(userController).setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver()).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(userController)
+                .setCustomArgumentResolvers(new AuthenticationPrincipalArgumentResolver()).build();
 
         objectMapper = new ObjectMapper();
     }
