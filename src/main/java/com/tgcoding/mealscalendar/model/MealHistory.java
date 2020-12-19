@@ -1,11 +1,14 @@
 package com.tgcoding.mealscalendar.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+
+import static com.fasterxml.jackson.annotation.JsonProperty.Access.WRITE_ONLY;
 
 @Entity
 @Data
@@ -15,7 +18,8 @@ public class MealHistory {
     private Long id;
 
     @NotNull
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonProperty(access = WRITE_ONLY)
     private User user;
 
     @NotBlank

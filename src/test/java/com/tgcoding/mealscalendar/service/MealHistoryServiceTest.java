@@ -2,8 +2,10 @@ package com.tgcoding.mealscalendar.service;
 
 import com.tgcoding.mealscalendar.exception.KnownErrorException;
 import com.tgcoding.mealscalendar.model.MealHistory;
+import com.tgcoding.mealscalendar.model.User;
 import com.tgcoding.mealscalendar.repository.MealHistoryRepository;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -18,7 +20,7 @@ import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @ActiveProfiles("test")
@@ -29,6 +31,14 @@ public class MealHistoryServiceTest {
 
     @InjectMocks
     private MealHistoryService mealHistoryService;
+
+    private final User user = new User();
+    private final static Long USER_ID = 12345L;
+
+    @Before
+    public void setup() {
+        user.setId(USER_ID);
+    }
 
     @Test
     public void save_new() throws Exception {
@@ -74,7 +84,8 @@ public class MealHistoryServiceTest {
 
     @Test
     public void getAll() {
-        Iterable<MealHistory> allMeals = mealHistoryService.getAll();
+        Iterable<MealHistory> allMeals = mealHistoryService.getAll(user);
+        verify(mealHistoryRepository, times(1)).findAllByUser_Id(eq(USER_ID));
         assertNotNull(allMeals);
     }
 

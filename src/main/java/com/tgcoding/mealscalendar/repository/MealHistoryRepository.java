@@ -9,5 +9,6 @@ import java.util.List;
 
 @Repository
 public interface MealHistoryRepository extends CrudRepository<MealHistory, Long> {
-    List<MealHistory> findAllByMealDateBetweenOrderByMealTime(LocalDate start, LocalDate end);
+    List<MealHistory> findAllByUser_IdAndMealDateBetweenOrderByMealTime(Long userId, LocalDate start, LocalDate end);
+    List<MealHistory> findAllByUser_Id(Long userId);
 }

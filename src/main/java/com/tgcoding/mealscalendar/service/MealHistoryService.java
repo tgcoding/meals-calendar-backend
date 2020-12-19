@@ -2,6 +2,7 @@ package com.tgcoding.mealscalendar.service;
 
 import com.tgcoding.mealscalendar.exception.KnownErrorException;
 import com.tgcoding.mealscalendar.model.MealHistory;
+import com.tgcoding.mealscalendar.model.User;
 import com.tgcoding.mealscalendar.repository.MealHistoryRepository;
 import com.tgcoding.mealscalendar.util.DateUtil;
 import org.springframework.stereotype.Service;
@@ -40,17 +41,18 @@ public class MealHistoryService {
         return saved;
     }
 
-    public Iterable<MealHistory> getAll() {
-        Iterable<MealHistory> items = mealHistoryRepository.findAll();
+    public Iterable<MealHistory> getAll(User user) {
+
+        Iterable<MealHistory> items = mealHistoryRepository.findAllByUser_Id(user.getId());
         return items;
     }
 
-    public Map<LocalDate, List<MealHistory>> getCurrentWeek(LocalDate date) {
+    public Map<LocalDate, List<MealHistory>> getCurrentWeek(LocalDate date, User user) {
         LocalDate start = DateUtil.getFirstWeekDate(date);
         LocalDate end = DateUtil.getLastWeekDate(date);
 
         Map<LocalDate, List<MealHistory>> datesMap = getAllDatesBetweenInclusiveAsMap(start, end);
-        List<MealHistory> mealHistoryList = mealHistoryRepository.findAllByMealDateBetweenOrderByMealTime(start, end);
+        List<MealHistory> mealHistoryList = mealHistoryRepository.findAllByUser_IdAndMealDateBetweenOrderByMealTime(user.getId(), start, end);
         Map<LocalDate, List<MealHistory>> mealHistoryMap = groupByDate(mealHistoryList);
         datesMap.putAll(mealHistoryMap);
 

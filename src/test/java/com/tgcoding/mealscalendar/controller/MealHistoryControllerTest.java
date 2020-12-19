@@ -2,6 +2,7 @@ package com.tgcoding.mealscalendar.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tgcoding.mealscalendar.model.MealHistory;
+import com.tgcoding.mealscalendar.model.User;
 import com.tgcoding.mealscalendar.service.MealHistoryService;
 import com.tgcoding.mealscalendar.setup.security.WithMockCustomUser;
 import com.tgcoding.mealscalendar.setup.security.WithMockCustomUserSecurityContextFactory;
@@ -17,7 +18,11 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -47,19 +52,38 @@ public class MealHistoryControllerTest {
     }
 
     @Test
+    @WithMockCustomUser
     public void getAllCallsService() throws Exception {
         Iterable<MealHistory> historyList = new ArrayList<>();
 
         String foodResponseJson = objectMapper.writeValueAsString(historyList);
 
-        when(mealHistoryService.getAll())
+        when(mealHistoryService.getAll(any(User.class)))
                 .thenReturn(historyList);
 
         mockMvc.perform(get("/mealhistory/"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(foodResponseJson));
 
-        verify(mealHistoryService, times(1)).getAll();
+        verify(mealHistoryService, times(1)).getAll(any(User.class));
+    }
+
+    @Test
+    @WithMockCustomUser
+    public void getCurrentWeekCallsService() throws Exception {
+        Map<LocalDate, List<MealHistory>> historyList = new LinkedHashMap<>();
+
+        String foodResponseJson = objectMapper.writeValueAsString(historyList);
+
+        when(mealHistoryService.getCurrentWeek(any(LocalDate.class), any(User.class)))
+                .thenReturn(historyList);
+
+        mockMvc.perform(get("/mealhistory/currentweek/"))
+                .andExpect(status().isOk())
+                .andExpect(content().json(foodResponseJson));
+
+        verify(mealHistoryService, times(1)).getCurrentWeek(any(LocalDate.class),
+                any(User.class));
     }
 
     @Test
