@@ -6,7 +6,6 @@ import com.tgcoding.mealscalendar.security.CurrentUser;
 import com.tgcoding.mealscalendar.security.UserPrincipal;
 import com.tgcoding.mealscalendar.service.MealHistoryService;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -34,14 +33,15 @@ public class MealHistoryController {
     }
 
     @GetMapping("/")
-    public Iterable<MealHistory> getAll() {
-        Iterable<MealHistory> items = mealHistoryService.getAll();
+    public Iterable<MealHistory> getAll(@CurrentUser UserPrincipal userPrincipal) {
+        Iterable<MealHistory> items = mealHistoryService.getAll(userPrincipal.getUser());
         return items;
     }
 
     @GetMapping("/currentweek")
-    public Map<LocalDate, List<MealHistory>> getCurrentWeek() {
-        Map<LocalDate, List<MealHistory>> items = mealHistoryService.getCurrentWeek(LocalDate.now());
+    public Map<LocalDate, List<MealHistory>> getCurrentWeek(@CurrentUser UserPrincipal userPrincipal) {
+        Map<LocalDate, List<MealHistory>> items = mealHistoryService.getCurrentWeek(LocalDate.now(),
+                userPrincipal.getUser());
         return items;
     }
 

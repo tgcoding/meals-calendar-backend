@@ -37,7 +37,7 @@ public class MealHistoryServiceIntegrationTest {
     private UserService userService;
 
     private static User user = new User();
-    private Long userId = null;
+    private static Long userId = null;
     private static final String EMAIL = "test@gmail.com";
 
     @Before
@@ -118,7 +118,7 @@ public class MealHistoryServiceIntegrationTest {
         meal5.setMealDate(now5);
         mealHistoryService.save(meal5);
 
-        Map<LocalDate, List<MealHistory>> map = mealHistoryService.getCurrentWeek(LocalDate.of(2001, Month.AUGUST, 30));
+        Map<LocalDate, List<MealHistory>> map = mealHistoryService.getCurrentWeek(LocalDate.of(2001, Month.AUGUST, 30), user);
 
         LocalDate with3 = LocalDate.of(2001, Month.AUGUST, 30);
         LocalDate with1Aug23 = LocalDate.of(2001, Month.AUGUST, 23);
